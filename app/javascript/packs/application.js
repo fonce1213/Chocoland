@@ -8,6 +8,10 @@ import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
 
+// bootstrap追加用
+import "bootstrap";
+import "../stylesheets/application.scss";
+
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()
