@@ -1,0 +1,3 @@
+class PostItem < ApplicationRecord
+  
+end
