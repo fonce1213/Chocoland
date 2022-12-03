@@ -1,6 +1,7 @@
 <div class="container">
   <div class="row">
-    <%= form_with model: @PostItem do |f| %>
+    
+    <%= form_with model: @post_item do |f| %>
       <ul class="">
         <%= f.label :item_name, "商品名" %>
         <%= f.text_field :item_name %>
@@ -9,6 +10,35 @@
         <%= f.label :review, "レビュー" %>
         <%= f.text_area :review %>
       </ul>
+      <ul class="">
+        <%= f.label :price, "価格" %>
+        <%= f.text_field :price %>
+      </ul>
+      
+      <div class="star-form-group" id="star1">
+        <%= f.label :evaluation, "評価", class: "star-title" %>
+        <!-- 入力方法を変更する-->
+        <%= f.text_field :evaluation %>
+      </div>
+      
+      <div class="">
+        <%= f.label :item_URL, "URL" %>
+        <%= f.text_field :item_URL %>
+      </div>
+      
+      <%= fields_for @shop do |shop| %>
+        <%= shop.label :shop_name, "店名" %>
+        <%= shop.text_field :shop_name %>
+        <%= shop.label :address, "住所" %>
+        <%= shop.text_field :address %>
+        <%= shop.label :telephone_number %>
+        <%= shop.text_field :telephone_number %>
+        <%= shop.label :shop_URL %>
+        <%= shop.text_field :shop_URL %>
+        <%= shop.label :email %>
+        <%= shop.text_field :email %>
+      <% end %>
+      <%= f.submit "投稿する", class: "btn btn-success" %>
     <% end %>
   </div>
 </div>

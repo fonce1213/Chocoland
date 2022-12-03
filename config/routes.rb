@@ -1,8 +1,5 @@
 Rails.application.routes.draw do
   namespace :public do
-    get 'users/show'
-    get 'users/edit'
-    get 'users/update'
     get 'users/unsubscribe'
     get 'users/withdraw'
   end
@@ -30,7 +27,14 @@ Rails.application.routes.draw do
   
   scope module: :public do
     root 'post_items#top'
-    resources :post_items, only: [:new]
+    get 'users/mypage' => 'users#show', as: 'mypage'
+    get 'users/information/edit' => 'users#edit', as: 'edit_information'
+    patch 'users/information' => 'users#update', as: 'update_information'
+    
+    resources :post_items, only: [:new, :create, :index, :show] do
+      resource :bookmarks, only: [:create, :destroy]
+      resources :post_comments, only: [:create, :destroy]
+    end
   end
 
   

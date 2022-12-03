@@ -1,0 +1,39 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <%= @post_item.item_name %>
+      <%= @post_item.review %>
+    </div>
+    
+    <% if @post_item.bookmark_by?(current_user) %>
+      <p>
+        <%= link_to post_item_bookmarks_path(@post_item), method: :delete do %>
+          <%= @post_item.bookmarks.count %>いいね
+        <% end %>
+      </p>
+    <% else %>
+      <p>
+        <%= link_to post_item_bookmarks_path(@post_item), method: :post do %>
+          <%= @post_item.bookmarks.count %>いいね
+        <% end %>
+      </p>
+    <% end %>
+    
+    <div class="col">
+      <p>コメント件数：<%= @post_item.post_comments.count %></p>
+      <% @post_item.post_comments.each do |post_comment| %>
+        <%= post_comment.user.name %>
+        <%= post_comment.comment %>
+        <% if post_comment.user == current_user %>
+          <%= link_to "削除", post_item_post_comment_path(post_comment.post_item, post_comment), method: :delete %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="col">
+      <%= form_with model: [@post_item, @post_comment] do |f| %>
+        <%= f.text_area :comment, rows: "5", placeholder: "コメントをここに" %>
+        <%= f.submit "コメントを投稿する", class: "btn btn-success" %>
+      <% end %>
+    </div>
+  </div>
+</div>
