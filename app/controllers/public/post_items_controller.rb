@@ -5,25 +5,59 @@ class Public::PostItemsController < ApplicationController
   def new
     @post_item = PostItem.new
     @shop = Shop.new
+    @tag = Tag.new
+    @tag_list = Tag.all
   end
   
   def create
     @post_item = PostItem.new(post_item_params)
     @post_item.user_id = current_user.id
     @shop = Shop.new(shop_params)
+    tag_list = params[:post_item][:tag_name].split(nil) # tagをスペースで区切る
     @shop.save!
     @post_item.shop_id = @shop.id
-    @post_item.save!
-    redirect_to post_items_path
+    if @post_item.save!
+      @post_item.save_tag(tag_list)
+      redirect_to post_items_path # redirect_back(fallback_location: root_path)
+    else
+      render post_items_path
+    end
   end
   
   def index
     @post_items = PostItem.all
+    @post_item = current_user.post_items.new
+    @tag_list = Tag.all
   end
   
   def show
     @post_item = PostItem.find(params[:id])
+    @post_tags = @post_item.tags
     @post_comment = PostComment.new
+  end
+  
+  def edit
+    @post_item = PostItem.find(params[:id])
+    @tag_list = @post_item.tags.pluck(:tag_name).join(' ')
+    @shop = @post_item.shop
+  end
+  
+  def update
+    @post_item = PostItem.find(params[:id])
+    @shop = @post_item.shop
+    tag_list = params[:post_item][:tag_name].split(nil)
+    if @post_item.update(post_item_params) & @shop.update(shop_params)
+      @post_item.save_tag(tag_list)
+      redirect_to post_item_path(@post_item.id), notice: "更新しました"
+    else
+      render :edit
+    end 
+  end
+  
+  def search
+    @tag_list = Tag.all
+    @tag = Tag.find(params[:tag_id])
+    @post_items = @tag.post_items.all
   end
   
   private

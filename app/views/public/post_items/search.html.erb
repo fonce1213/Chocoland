@@ -1,6 +1,15 @@
 <div class="container">
   <div class="row">
-    <% @post_items.each do |post_item| %>
+    <div class="col">
+      タグが<%= @tag.tag_name %>の投稿一覧
+    </div>
+    <div class="col">
+      <% @tag_list.each do |list| %>
+        <%= link_to list.tag_name, tag_post_items_path(tag_id: list.id) %>
+        <%= "(#{list.post_items.count})" %>
+      <% end %>
+    </div>
+     <% @post_items.each do |post_item| %>
       <div class="col">
         <div class="card" style="width: 30rem;">
           <div class="card-body">
@@ -19,6 +28,7 @@
       
       
     <% end %>
+    
   </div>
 </div>
 

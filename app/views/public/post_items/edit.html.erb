@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     
-    <%= form_with model: @post_item do |f| %>
+    <%= form_with model: @post_item, method: :patch do |f| %>
       <ul class="">
         <%= f.label :item_name, "商品名" %>
         <%= f.text_field :item_name %>
@@ -28,7 +28,7 @@
       
       <div class="">
         スペースを入力することで複数のタグを付けることができます。
-        <%= f.text_field :tag_name %>
+        <%= f.text_field :tag_name, value: @tag_list %>
       </div>
       
       <!--<div class="form-group">-->
@@ -67,7 +67,7 @@
       
       
       
-      <%= f.submit "投稿する", class: "btn btn-success" %>
+      <%= f.submit "更新する", class: "btn btn-success" %>
     <% end %>
   </div>
 </div>
@@ -75,10 +75,4 @@
 <%= form_with model: @tag, url: tags_path, method: :post do |tag| %>
   <%= tag.text_field :tag_name %>
   <%= tag.submit "タグ追加", class: "btn btn-primary" %>
-<% end %>
-
-タグリスト
-<% @tag_list.each do |list| %>
-  <%= link_to list.tag_name, tag_post_items_path(tag_id: list.id) %>
-  <%= "(#{list.post_items.count})" %>
 <% end %>

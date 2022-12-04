@@ -31,9 +31,12 @@ Rails.application.routes.draw do
     get 'users/information/edit' => 'users#edit', as: 'edit_information'
     patch 'users/information' => 'users#update', as: 'update_information'
     
-    resources :post_items, only: [:new, :create, :index, :show] do
+    resources :post_items, only: [:new, :create, :index, :show, :edit, :update] do
       resource :bookmarks, only: [:create, :destroy]
       resources :post_comments, only: [:create, :destroy]
+    end
+    resources :tags, only: [:create] do
+      get 'post_items', to: 'post_items#search'
     end
   end
 
