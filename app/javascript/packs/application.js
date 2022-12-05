@@ -12,6 +12,10 @@ import "channels"
 import "bootstrap";
 import "../stylesheets/application.scss";
 
+require("packs/raty")
+window.$ = window.jQuery = require('jquery');
+import 'jquery'
+
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()

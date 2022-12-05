@@ -4,6 +4,22 @@
       <%= @post_item.item_name %>
       <%= @post_item.review %>
     </div>
+    <div class="col">
+      <div id="star-rate<%= @post_item.id %>">
+        <script>
+          $('#star-rate<%= @post_item.id %>').empty();
+          $('#star-rate<%= @post_item.id %>').raty({
+            size: 36,
+            starOff: '<%= asset_path('star-off.png') %>',
+            starOn: '<%= asset_path('star-on.png') %>',
+            starHalf: '<%= asset_path('star-half.png') %>',
+            half: true,
+            readOnly: true,
+            score: <%= @post_item.evaluation %>,
+          })
+        </script>
+      </div>
+    </div>
     
     <% @post_item.tags.each do |tag| %>
       <span><%= link_to tag.tag_name, tag_post_items_path(tag_id: tag.id) %></span> <!-- リンク修正 -->

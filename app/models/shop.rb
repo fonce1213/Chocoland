@@ -1,8 +1,10 @@
 class Shop < ApplicationRecord
-  validates :shop_name, presence: true
-  validates :address, presence: true
-  validates :telephone_number, presence: true
-  validates :shop_URL, presence: true
+  with_options presence: true, on: :publicize do
+    validates :shop_name
+    validates :address
+    validates :telephone_number
+    validates :shop_URL
+  end
   
   has_many :post_items, dependent: :destroy
 end

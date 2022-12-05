@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     
-    <%= form_with model: @post_item do |f| %>
+    <%= form_with model: @post_item, local: true do |f| %>
       <ul class="">
         <%= f.label :item_name, "商品名" %>
         <%= f.text_field :item_name %>
@@ -15,11 +15,24 @@
         <%= f.text_field :price %>
       </ul>
       
-      <div class="star-form-group" id="star1">
+      <div class="star-form-group" id="star">
         <%= f.label :evaluation, "評価", class: "star-title" %>
         <!-- 入力方法を変更する-->
-        <%= f.text_field :evaluation %>
+        <%= f.hidden_field :evaluation, id: :review_star %>
+        <!--< %= f.text_field :evaluation %>-->
       </div>
+      <script>
+        $('#star').empty();
+        $('#star').raty({
+          size: 36,
+          starOff: '<%= asset_path('star-off.png') %>',
+          starOn: '<%= asset_path('star-on.png') %>',
+          starHalf: '<%= asset_path('star-half.png') %>',
+          scoreName: 'post_item[evaluation]',
+          half: true,
+        })
+      </script>
+      
       
       <div class="">
         <%= f.label :item_URL, "URL" %>
@@ -67,7 +80,8 @@
       
       
       
-      <%= f.submit "投稿する", class: "btn btn-success" %>
+      <%= f.submit "投稿する", :name => 'post', class: "btn btn-success" %>
+      <%= f.submit "下書きに保存", :name => 'draft', class: "btn btn-secondary" %>
     <% end %>
   </div>
 </div>

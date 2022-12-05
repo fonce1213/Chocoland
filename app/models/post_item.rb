@@ -1,9 +1,11 @@
 class PostItem < ApplicationRecord
   
-  validates :item_name, presence: true
-  validates :review, presence: true
-  validates :price, presence: true
-  validates :evaluation, presence: true
+  with_options presence: true, on: :publicize do
+    validates :item_name
+    validates :review
+    validates :price
+    validates :evaluation
+  end
   
   belongs_to :user
   has_many :post_comments, dependent: :destroy

@@ -14,13 +14,24 @@ class Public::PostItemsController < ApplicationController
     @post_item.user_id = current_user.id
     @shop = Shop.new(shop_params)
     tag_list = params[:post_item][:tag_name].split(nil) # tagをスペースで区切る
-    @shop.save!
+    @shop.save
     @post_item.shop_id = @shop.id
-    if @post_item.save!
-      @post_item.save_tag(tag_list)
-      redirect_to post_items_path # redirect_back(fallback_location: root_path)
+    # 投稿ボタンを押下した場合
+    if params[:post]
+      @post_item.attributes = post_item_params.merge(is_draft: false)
+      if @shop.save(context: :publicize) & @post_item.save(context: :publicize)
+        @post_item.save_tag(tag_list)
+        redirect_to post_items_path, notice: "投稿しました" # redirect_back(fallback_location: root_path)
+      else
+        render :new
+      end
+    # 下書きボタンを押下した場合
     else
-      render post_items_path
+      if @post_item.update!(post_item_params)
+        redirect_to :mypage, notice: "下書きを保存しました"
+      else
+        render :new
+      end
     end
   end
   
