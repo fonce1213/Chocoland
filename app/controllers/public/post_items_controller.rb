@@ -5,46 +5,29 @@ class Public::PostItemsController < ApplicationController
   def new
     @post_item = PostItem.new
     @shop = Shop.new
-    @tag = Tag.new
-    @tag_list = Tag.all
   end
   
   def create
     @post_item = PostItem.new(post_item_params)
     @post_item.user_id = current_user.id
     @shop = Shop.new(shop_params)
-    tag_list = params[:post_item][:tag_name].split(nil) # tagをスペースで区切る
     @shop.save
     @post_item.shop_id = @shop.id
-    # 投稿ボタンを押下した場合
-    if params[:post]
-      @post_item.attributes = post_item_params.merge(is_draft: false)
-      if @shop.save(context: :publicize) & @post_item.save(context: :publicize)
-        @post_item.save_tag(tag_list)
-        redirect_to post_items_path, notice: "投稿しました" # redirect_back(fallback_location: root_path)
-      else
-        render :new
-      end
-    # 下書きボタンを押下した場合
+    if @post_item.save!
+      redirect_to post_items_path, notice: "商品を登録しました"
     else
-      if @post_item.update!(post_item_params)
-        redirect_to :mypage, notice: "下書きを保存しました"
-      else
-        render :new
-      end
+      render :new
     end
   end
   
   def index
     @post_items = PostItem.all
     @post_item = current_user.post_items.new
-    @tag_list = Tag.all
   end
   
   def show
     @post_item = PostItem.find(params[:id])
-    @post_tags = @post_item.tags
-    @post_comment = PostComment.new
+    @review = Review.new
   end
   
   def edit

@@ -14,6 +14,13 @@ class Public::UsersController < ApplicationController
       render :edit
     end
   end
+  
+  def index
+    @reviews = current_user.reviews
+    #@post_items = PostItem.all
+    #@post_item = current_user.post_items.new
+    @tag_list = Tag.all
+  end
 
   def unsubscribe
   end

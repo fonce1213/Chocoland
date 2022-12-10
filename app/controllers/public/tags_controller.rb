@@ -3,7 +3,7 @@ class Public::TagsController < ApplicationController
   def create
     @tag = Tag.new(tag_params)
     @tag.save
-    redirect_to new_post_item_path
+    redirect_back(fallback_location: root_path)
   end
   
   private

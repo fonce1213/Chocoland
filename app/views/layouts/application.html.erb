@@ -29,11 +29,12 @@
                 <li class="nav-link">
                   <%= link_to "マイページ", mypage_path, class: "btn" %>
                 </li>
+                <!-- レビューを投稿する項目を作成する -->
                 <li class="nav-link">
-                  <%= link_to "新規投稿", new_post_item_path, class: "btn" %>
+                  <%= link_to "商品を投稿する", new_post_item_path, class: "btn" %>
                 </li>
                 <li class="nav-link">
-                  <%= link_to "投稿一覧", post_items_path, class: "btn" %>
+                  <%= link_to "商品一覧", post_items_path, class: "btn" %>
                 </li>
                 <li class="nav-link">
                   <%= link_to "ログアウト", destroy_user_session_path, method: :delete, class: "btn" %>

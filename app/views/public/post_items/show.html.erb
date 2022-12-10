@@ -2,28 +2,11 @@
   <div class="row">
     <div class="col">
       <%= @post_item.item_name %>
-      <%= @post_item.review %>
-    </div>
-    <div class="col">
-      <div id="star-rate<%= @post_item.id %>">
-        <script>
-          $('#star-rate<%= @post_item.id %>').empty();
-          $('#star-rate<%= @post_item.id %>').raty({
-            size: 36,
-            starOff: '<%= asset_path('star-off.png') %>',
-            starOn: '<%= asset_path('star-on.png') %>',
-            starHalf: '<%= asset_path('star-half.png') %>',
-            half: true,
-            readOnly: true,
-            score: <%= @post_item.evaluation %>,
-          })
-        </script>
-      </div>
+      
     </div>
     
-    <% @post_item.tags.each do |tag| %>
-      <span><%= link_to tag.tag_name, tag_post_items_path(tag_id: tag.id) %></span> <!-- リンク修正 -->
-    <% end %>
+    
+   
     
     <% if @post_item.bookmark_by?(current_user) %>
       <p>
@@ -47,21 +30,40 @@
     </div>
     
     <div class="col">
-      <p>コメント件数：<%= @post_item.post_comments.count %></p>
-      <% @post_item.post_comments.each do |post_comment| %>
-        <%= post_comment.user.name %>
-        <%= post_comment.comment %>
-        <% if post_comment.user == current_user %>
-          <%= link_to "削除", post_item_post_comment_path(post_comment.post_item, post_comment), method: :delete %>
+      <p>レビュー件数：<%= @post_item.reviews.count %></p>
+      <% @post_item.reviews.each do |review| %>
+       <% unless review.is_draft == true %>
+        <div class="card" style="width: 30rem;">
+          <div class="card-body">
+            <p class="card-title"><%= review.user.name %></p>
+            <p class="card-subtitle"><%= review.review %></p>
+            <div class="col">
+              <div id="star-rate<%= review.id %>">
+                <script>
+                  $('#star-rate<%= review.id %>').empty();
+                  $('#star-rate<%= review.id %>').raty({
+                    size: 36,
+                    starOff: '<%= asset_path('star-off.png') %>',
+                    starOn: '<%= asset_path('star-on.png') %>',
+                    starHalf: '<%= asset_path('star-half.png') %>',
+                    half: true,
+                    readOnly: true,
+                    score: <%= review.evaluation %>,
+                  })
+                </script>
+              </div>
+          </div>
+          <%= link_to "レビューを見る", post_item_review_path(review.post_item, review) %>
+          <% if review.user == current_user %>
+            <%= link_to "削除", post_item_review_path(review.post_item, review), method: :delete %>
+          <% end %>
+        </div>
         <% end %>
       <% end %>
     </div>
+    
     <div class="col">
-      <%= form_with model: [@post_item, @post_comment] do |f| %>
-        <%= f.text_area :comment, rows: "5", placeholder: "コメントをここに" %>
-        <%= f.submit "コメントを投稿する", class: "btn btn-success" %>
-      <% end %>
+      <%= link_to "レビューを投稿する", new_post_item_review_path(@post_item.id) %>
     </div>
   </div>
-  <div class="row"
-</div>
+  <div class="row"></div>

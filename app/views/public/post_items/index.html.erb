@@ -6,37 +6,24 @@
           <div class="card-body">
             <p class="card-title"><%= link_to post_item.item_name, post_item_path(post_item.id) %></p>
             <p class="card-subtitle"><%= post_item.shop.shop_name %></p>
-            <p class="card-text"><%= post_item.review %></p>
             
-            <div class="col">
-              <div id="star-rate<%= post_item.id %>">
-                <script>
-                  $('#star-rate<%= post_item.id %>').empty();
-                  $('#star-rate<%= post_item.id %>').raty({
-                    size: 36,
-                    starOff: '<%= asset_path('star-off.png') %>',
-                    starOn: '<%= asset_path('star-on.png') %>',
-                    starHalf: '<%= asset_path('star-half.png') %>',
-                    half: true,
-                    readOnly: true,
-                    score: <%= post_item.evaluation %>,
-                  })
-                </script>
-              </div>
-            </div>
+            <% if post_item.bookmark_by?(current_user) %>
+              <p>
+                <%= link_to post_item_bookmarks_path(post_item), method: :delete do %>
+                  <%= post_item.bookmarks.count %>いいね
+                <% end %>
+              </p>
+            <% else %>
+              <p>
+                <%= link_to post_item_bookmarks_path(post_item), method: :post do %>
+                  <%= post_item.bookmarks.count %>いいね
+                <% end %>
+              </p>
+            <% end %>      
             
-            
-            <% post_item.tags.each do |tag| %>
-              <span><%= link_to tag.tag_name, tag_post_items_path(tag_id: tag.id) %></span> <!-- リンク修正 -->
-            <% end %>
-            <!--<p class="">< %= post_item.tags.map(&:tag_name).join(',') %></p>-->
-            <p><%= link_to "#{post_item.post_comments.count}コメント", post_item_path(post_item.id) %></p>
           </div>
         </div>
       </div>
-      
-      
-      
     <% end %>
   </div>
 </div>

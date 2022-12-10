@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="row">
+    
+    <table class="table">
+      <tr>
+        <td>商品名</td>
+        <td><%= @post_item.item_name %></td>
+      </tr>
+      <tr>
+        <td>価格</td>
+        <td><%= @post_item.price %></td>
+      </tr>
+      <tr>
+        <td>URL</td>
+        <td><%= @post_item.item_URL %></td>
+      </tr>
+    </table>
+    
+    <table class="table">
+      <tr>
+        <td>店名</td>
+        <td><%= @shop.shop_name %></td>
+      </tr>
+      <tr>
+        <td>住所</td>
+        <td><%= @shop.address %></td>
+      </tr>
+      <tr>
+        <td>電話番号</td>
+        <td><%= @shop.telephone_number %></td>
+      </tr>
+      <tr>
+        <td>ホームページ</td>
+        <td><%= @shop.shop_URL %></td>
+      </tr>
+    </table>
+    
+    
+    <%= form_with model: [@post_item, @review], local: true do |f| %>
+      
+      <ul class="">
+        <%= f.label :review, "レビュー" %>
+        <%= f.text_area :review %>
+      </ul>
+     
+      <div class="star-form-group" id="star">
+        <%= f.label :evaluation, "評価", class: "star-title" %>
+        <!-- 入力方法を変更する-->
+        <%= f.hidden_field :evaluation, id: :review_star %>
+        <!--< %= f.text_field :evaluation %>-->
+      </div>
+      <script>
+        // $('#star').empty();
+        $('#star').raty({
+          size: 36,
+          starOff: '<%= asset_path('star-off.png') %>',
+          starOn: '<%= asset_path('star-on.png') %>',
+          starHalf: '<%= asset_path('star-half.png') %>',
+          scoreName: 'review[evaluation]',
+          half: true,
+        })
+      </script>
+      
+      <div class="col">
+        スペースを入力することで複数のタグを付けることができます。
+        <%= f.text_field :tag_name %>
+      </div>
+  
+      <%= f.submit "投稿する", :name => 'post', class: "btn btn-success" %>
+      <%= f.submit "下書きに保存", :name => 'draft', class: "btn btn-secondary" %>
+    <% end %>
+  </div>
+</div>
+
+<%= form_with model: @tag, url: tags_path, method: :post do |tag| %>
+  <%= tag.text_field :tag_name %>
+  <%= tag.submit "タグ追加", class: "btn btn-primary" %>
+<% end %>
+
+タグリスト
+<% @tag_list.each do |list| %>
+  <%= link_to list.tag_name, tag_reviews_path(tag_id: list.id) %>
+  <%= "(#{list.reviews.count})" %>
+<% end %>

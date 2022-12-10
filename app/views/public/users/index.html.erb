@@ -1,0 +1,49 @@
+投稿一覧
+
+<div class="container">
+  <div class="row">
+    <% @reviews.each do |review| %>
+      <div class="col">
+        <div class="card" style="width: 30rem;">
+          <div class="card-body">
+            <p class="card-title">
+              <%= link_to review.post_item.item_name, edit_post_item_review_path(review.post_item_id, review.id) %></p>
+            <p class="card-subtitle"><%= review.post_item.shop.shop_name %></p>
+            <p class="card-text"><%= review.review %></p>
+            <% if review.is_draft == true %>
+              下書き
+            <% else %>
+              公開
+            <% end %>
+            <div class="col">
+              <div id="star-rate<%= review.id %>">
+                <script>
+                  $('#star-rate<%= review.id %>').empty();
+                  $('#star-rate<%= review.id %>').raty({
+                    size: 36,
+                    starOff: '<%= asset_path('star-off.png') %>',
+                    starOn: '<%= asset_path('star-on.png') %>',
+                    starHalf: '<%= asset_path('star-half.png') %>',
+                    half: true,
+                    readOnly: true,
+                    score: <%= review.evaluation %>,
+                  })
+                </script>
+              </div>
+            </div>
+            
+            
+            <% review.tags.each do |tag| %>
+              <span><%= link_to tag.tag_name, tag_reviews_path(tag_id: tag.id) %></span> <!-- リンク修正 -->
+            <% end %>
+            <!--<p class="">< %= post_item.tags.map(&:tag_name).join(',') %></p>-->
+            <p><%= link_to "#{review.post_comments.count}コメント", post_item_review_path(review.post_item, review.id) %></p>
+          </div>
+        </div>
+      </div>
+      
+      <%= link_to "削除", post_item_review_path(review.post_item, review.id), method: :delete %>
+      
+    <% end %>
+  </div>
+</div>

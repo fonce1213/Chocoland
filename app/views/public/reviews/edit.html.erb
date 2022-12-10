@@ -1,0 +1,96 @@
+<div class="container">
+  <div class="row">
+    
+    <table class="table">
+      <tr>
+        <td>商品名</td>
+        <td><%= @post_item.item_name %></td>
+      </tr>
+      <tr>
+        <td>価格</td>
+        <td><%= @post_item.price %></td>
+      </tr>
+      <tr>
+        <td>URL</td>
+        <td><%= @post_item.item_URL %></td>
+      </tr>
+    </table>
+    
+    <table class="table">
+      <tr>
+        <td>店名</td>
+        <td><%= @shop.shop_name %></td>
+      </tr>
+      <tr>
+        <td>住所</td>
+        <td><%= @shop.address %></td>
+      </tr>
+      <tr>
+        <td>電話番号</td>
+        <td><%= @shop.telephone_number %></td>
+      </tr>
+      <tr>
+        <td>ホームページ</td>
+        <td><%= @shop.shop_URL %></td>
+      </tr>
+    </table>
+    
+    <%= form_with model: [@post_item, @review], local: true do |f| %>
+      
+      <ul class="">
+        <%= f.label :review, "レビュー" %>
+        <%= f.text_area :review %>
+      </ul>
+     
+      <div class="star-form-group" id="star">
+        <%= f.label :evaluation, "評価", class: "star-title" %>
+        <!-- 入力方法を変更する-->
+        <%= f.hidden_field :evaluation, id: :review_star %>
+        <!--< %= f.text_field :evaluation %>-->
+      </div>
+     
+      
+      <div class="col">
+              <div id="star-rate<%= @review.id %>">
+                <script>
+                  $('#star-rate<%= @review.id %>').empty();
+                  $('#star-rate<%= @review.id %>').raty({
+                    size: 36,
+                    starOff: '<%= asset_path('star-off.png') %>',
+                    starOn: '<%= asset_path('star-on.png') %>',
+                    starHalf: '<%= asset_path('star-half.png') %>',
+                    half: true,
+                    readOnly: true,
+                    score: <%= @review.evaluation %>,
+                  })
+                </script>
+              </div>
+            </div>
+      
+      
+      
+      <div class="col">
+        スペースを入力することで複数のタグを付けることができます。
+        <%= f.text_field :tag_name %>
+      </div>
+      
+      
+      
+     
+      <% if @review.is_draft == true %>
+        <%= f.submit "レビューを公開", :name => "publicize_draft", class: "btn btn-warning" %>
+        <%= f.submit "下書きを更新", :name => "update_draft", class: "btn btn-outline" %>
+      <% else %>
+        <%= f.submit "更新する", :name => "update_review", class: "btn btn-warning" %>
+      <% end %>
+      
+      
+      
+    <% end %>
+  </div>
+</div>
+
+<%= form_with model: @tag, url: tags_path, method: :post do |tag| %>
+  <%= tag.text_field :tag_name %>
+  <%= tag.submit "タグ追加", class: "btn btn-primary" %>
+<% end %>

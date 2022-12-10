@@ -9,8 +9,10 @@ class User < ApplicationRecord
   
   has_one_attached :image
   has_many :post_items, dependent: :destroy
+  has_many :reviews, dependent: :destroy
   has_many :post_comments, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
+  has_many :favorites, dependent: :destroy
   
   def get_image(width, height)
     unless image.attached?

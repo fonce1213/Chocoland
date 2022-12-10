@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_27_125341) do
+ActiveRecord::Schema.define(version: 2022_12_07_121559) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -57,41 +57,66 @@ ActiveRecord::Schema.define(version: 2022_11_27_125341) do
     t.integer "post_item_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["post_item_id"], name: "index_bookmarks_on_post_item_id"
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
-  create_table "item_tags", force: :cascade do |t|
-    t.integer "post_item_id", null: false
-    t.integer "tag_id", null: false
+  create_table "favorites", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "review_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["review_id"], name: "index_favorites_on_review_id"
+    t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
   create_table "post_comments", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "post_item_id", null: false
+    t.integer "review_id", null: false
     t.text "comment", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["review_id"], name: "index_post_comments_on_review_id"
+    t.index ["user_id"], name: "index_post_comments_on_user_id"
   end
 
   create_table "post_items", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "shop_id", null: false
     t.string "item_name", null: false
-    t.text "review", null: false
     t.integer "price", null: false
-    t.float "evaluation", null: false
     t.string "item_URL", null: false
-    t.boolean "is_draft", default: true, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["shop_id"], name: "index_post_items_on_shop_id"
+    t.index ["user_id"], name: "index_post_items_on_user_id"
+  end
+
+  create_table "review_tags", force: :cascade do |t|
+    t.integer "review_id", null: false
+    t.integer "tag_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["review_id"], name: "index_review_tags_on_review_id"
+    t.index ["tag_id"], name: "index_review_tags_on_tag_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "post_item_id", null: false
+    t.text "review", null: false
+    t.float "evaluation", null: false
+    t.boolean "is_draft", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["post_item_id"], name: "index_reviews_on_post_item_id"
+    t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
   create_table "shops", force: :cascade do |t|
     t.string "shop_name", null: false
     t.string "address", null: false
     t.string "telephone_number", null: false
-    t.string "email", null: false
     t.string "shop_URL", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -119,4 +144,16 @@ ActiveRecord::Schema.define(version: 2022_11_27_125341) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "bookmarks", "post_items"
+  add_foreign_key "bookmarks", "users"
+  add_foreign_key "favorites", "reviews"
+  add_foreign_key "favorites", "users"
+  add_foreign_key "post_comments", "reviews"
+  add_foreign_key "post_comments", "users"
+  add_foreign_key "post_items", "shops"
+  add_foreign_key "post_items", "users"
+  add_foreign_key "review_tags", "reviews"
+  add_foreign_key "review_tags", "tags"
+  add_foreign_key "reviews", "post_items"
+  add_foreign_key "reviews", "users"
 end

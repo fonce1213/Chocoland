@@ -26,17 +26,21 @@ Rails.application.routes.draw do
   end
   
   scope module: :public do
-    root 'post_items#top'
+    root 'reviews#top'
     get 'users/mypage' => 'users#show', as: 'mypage'
+    get 'users/review_list' => 'users#index', as: 'review_list'
     get 'users/information/edit' => 'users#edit', as: 'edit_information'
     patch 'users/information' => 'users#update', as: 'update_information'
     
     resources :post_items, only: [:new, :create, :index, :show, :edit, :update] do
       resource :bookmarks, only: [:create, :destroy]
-      resources :post_comments, only: [:create, :destroy]
+      resources :reviews, only:[:new, :create, :index, :show, :edit, :update, :destroy] do
+        resource :favorites, only: [:create, :destroy]
+        resources :post_comments, only: [:create, :destroy]
+      end
     end
     resources :tags, only: [:create] do
-      get 'post_items', to: 'post_items#search'
+      get 'reviews', to: 'review#search'
     end
   end
 
