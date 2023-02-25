@@ -1,0 +1,8 @@
+<h5>いいねした商品一覧</h5>
+
+<% @post_items.each do |post_item| %>
+  <div>
+    <%= link_to post_item.item_name, post_item_path(post_item) %>
+    <%= post_item.price %>円
+  </div>
+<% end %>

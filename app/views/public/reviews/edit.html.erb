@@ -1,96 +1,176 @@
-<div class="container">
+<div class="container my-5">
   <div class="row">
-    
-    <table class="table">
-      <tr>
-        <td>商品名</td>
-        <td><%= @post_item.item_name %></td>
-      </tr>
-      <tr>
-        <td>価格</td>
-        <td><%= @post_item.price %></td>
-      </tr>
-      <tr>
-        <td>URL</td>
-        <td><%= @post_item.item_URL %></td>
-      </tr>
-    </table>
-    
-    <table class="table">
-      <tr>
-        <td>店名</td>
-        <td><%= @shop.shop_name %></td>
-      </tr>
-      <tr>
-        <td>住所</td>
-        <td><%= @shop.address %></td>
-      </tr>
-      <tr>
-        <td>電話番号</td>
-        <td><%= @shop.telephone_number %></td>
-      </tr>
-      <tr>
-        <td>ホームページ</td>
-        <td><%= @shop.shop_URL %></td>
-      </tr>
-    </table>
-    
-    <%= form_with model: [@post_item, @review], local: true do |f| %>
-      
-      <ul class="">
-        <%= f.label :review, "レビュー" %>
-        <%= f.text_area :review %>
-      </ul>
-     
-      <div class="star-form-group" id="star">
-        <%= f.label :evaluation, "評価", class: "star-title" %>
-        <!-- 入力方法を変更する-->
-        <%= f.hidden_field :evaluation, id: :review_star %>
-        <!--< %= f.text_field :evaluation %>-->
-      </div>
-     
-      
-      <div class="col">
-              <div id="star-rate<%= @review.id %>">
-                <script>
-                  $('#star-rate<%= @review.id %>').empty();
-                  $('#star-rate<%= @review.id %>').raty({
-                    size: 36,
-                    starOff: '<%= asset_path('star-off.png') %>',
-                    starOn: '<%= asset_path('star-on.png') %>',
-                    starHalf: '<%= asset_path('star-half.png') %>',
-                    half: true,
-                    readOnly: true,
-                    score: <%= @review.evaluation %>,
-                  })
-                </script>
-              </div>
-            </div>
-      
-      
-      
-      <div class="col">
-        スペースを入力することで複数のタグを付けることができます。
-        <%= f.text_field :tag_name %>
+    <div class="col-6 mx-auto">
+      <div class="my-4">
+        <h5>店舗情報</h5>
+        <table class="table">
+          <tr>
+            <td>店名</td>
+            <td><%= @shop.shop_name %></td>
+          </tr>
+          <tr>
+            <td>住所</td>
+            <td><%= @shop.address %></td>
+          </tr>
+          <tr>
+            <td>電話番号</td>
+            <td><%= @shop.telephone_number %></td>
+          </tr>
+          <tr>
+            <td>ホームページ</td>
+            <td><%= @shop.shop_URL %></td>
+          </tr>
+        </table>
       </div>
       
-      
-      
-     
-      <% if @review.is_draft == true %>
-        <%= f.submit "レビューを公開", :name => "publicize_draft", class: "btn btn-warning" %>
-        <%= f.submit "下書きを更新", :name => "update_draft", class: "btn btn-outline" %>
-      <% else %>
-        <%= f.submit "更新する", :name => "update_review", class: "btn btn-warning" %>
+      <div class="my-4">  
+        <h5>商品情報</h5>
+        <table class="table">
+          <tr>
+            <td>商品名</td>
+            <td><%= @post_item.item_name %></td>
+          </tr>
+          <tr>
+            <td>価格</td>
+            <td><%= @post_item.price %></td>
+          </tr>
+          <tr>
+            <td>URL</td>
+            <td><%= @post_item.item_URL %></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+    
+  <div class="row">
+    <div class="col-6 mx-auto"> 
+      <%= form_with model: [@post_item, @review], local: true do |f| %>
+        <div>
+          <%= f.label :review, "レビュー" %>
+          <%= f.text_area :review, style: "width:500px; height: 200px;" %>
+        </div>
+         
+        <div class="star-form-group" id="star">
+          <%= f.label :evaluation, "評価", class: "star-title" %>
+          <%= f.hidden_field :evaluation, id: :review_star %>
+        </div>
+        <div class="col">
+          <div id="star-rate<%= @review.id %>">
+          <script>
+            $('#star-rate<%= @review.id %>').empty();
+            $('#star-rate<%= @review.id %>').raty({
+              size: 36,
+              starOff: '<%= asset_path('star-off.png') %>',
+              starOn: '<%= asset_path('star-on.png') %>',
+              starHalf: '<%= asset_path('star-half.png') %>',
+              half: true,
+              readOnly: true,
+              score: <%= @review.evaluation %>,
+            })
+          </script>
+          </div>
+        </div>
+          
+        <div class="col">
+          <%= f.hidden_field :tag_name, id: "tag_name" %>
+        </div>
+        
+        <h6 class="mt-5">タグ</h6>
+        <div class="col border" id="tag_name_container">
+          <% @review_tags.each do |tag| %>
+            <button class="btn btn-outline-primary tag-button" value="<%= tag.tag_name %>">
+              <%= tag.tag_name %>
+            </button>
+          <% end %>
+          <!-- ここにタグボタンを表示 -->
+        </div>
+        <input type="hidden" id="tag_name" />
+ 
+        <% if @review.is_draft == true %>
+          <%= f.submit "レビューを公開", :name => "publicize_draft", class: "btn btn-warning" %>
+          <%= f.submit "下書きを更新", :name => "update_draft", class: "btn btn-outline" %>
+        <% else %>
+          <%= f.submit "更新する", :name => "update_review", class: "btn btn-warning" %>
+        <% end %>
       <% end %>
-      
-      
-      
-    <% end %>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div>
+        <input type="text" id="new_tag_name">
+        <button type="button" id="add_new_tag_button" class="btn btn-outline-primary">タグの追加</button>
+      </div>
+      <div class="tag-list">
+        タグリスト
+        <% @tag_list.each do |list| %>
+          <button class="btn btn-outline-primary tag-button" value="<%= list.tag_name %>">
+            <%= list.tag_name %>
+          </button>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
 
-<%= form_with model: @tag, url: tags_path, method: :post do |tag| %>
-  <%= tag.text_field :tag_name %>
-  <%= tag.submit "タグ追加", class: "btn btn-primary" %>
-<% end %>
+<script>
+  // classが'tag-button'である全ての要素を取得し、NodeListとして代入
+  const tagButtons = document.querySelectorAll('.tag-button');
+  // idが'tag_name'の要素を取得し変数に代入 この要素はタグ名を入力するinput要素
+  const tagNameInput = document.querySelector('#tag_name');
+  // idが'tag_name_container'の要素を取得し変数に代入　この要素は選択されたタグ名が表示される要素の親要素
+  const tagNameContainer = document.querySelector('#tag_name_container');
+  // idが'new_tag_name'の要素を取得し、変数に代入　この要素は新規に追加されるタグ名を入力するinput要素
+  const newTagInput = document.querySelector('#new_tag_name');
+  // idが'add_new_tag_button'の要素を取得し、変数に代入　この要素は新規タグを追加するためのbutton要素
+  const addNewTagButton = document.querySelector('#add_new_tag_button');
+  
+  let selectedTags = [];
+  
+  // 'tagButtons'対して各ボタン要素にクリックリスナーを追加
+  tagButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // クリックされたボタンからテキストコンテンツを取得し、前後の空白を除去
+      const tag = this.textContent.trim();
+      // selectedTagsにクリックしたタグが含まれていない場合にのみ、そのタグをselectedTagsに追加
+      if (!selectedTags.includes(tag)) {
+        selectedTags.push(tag);
+        // selectedTags配列の内容を半角スペースで区切った文字列を生成し、その文字列をtagNameInput.valueに設定
+        tagNameInput.value = selectedTags.join(" ");
+        
+        const newTagButton = document.createElement('div');
+        newTagButton.classList.add('tag-button');
+        newTagButton.textContent = tag;
+        newTagButton.addEventListener('click', function() {
+          selectedTags = selectedTags.filter(selectedTag => selectedTag !== tag);
+          tagNameInput.value = selectedTags.join(" ");
+          tagNameContainer.removeChild(this);
+        });
+        
+        tagNameContainer.appendChild(newTagButton);
+      }
+    });
+  });
+
+
+  addNewTagButton.addEventListener('click', function() {
+    const newTag = newTagInput.value.trim();
+    if (newTag !== "" && !selectedTags.includes(newTag)) {
+      selectedTags.push(newTag);
+      tagNameInput.value = selectedTags.join(" ");
+  
+      const newTagButton = document.createElement('div');
+      newTagButton.classList.add('tag-button');
+      newTagButton.textContent = newTag;
+      newTagButton.addEventListener('click', function() {
+        selectedTags = selectedTags.filter(selectedTag => selectedTag !== newTag);
+        tagNameInput.value = selectedTags.join(" ");
+        tagNameContainer.removeChild(this);
+      });
+  
+      tagNameContainer.appendChild(newTagButton);
+      newTagInput.value = "";
+    }
+  });
+
+</script>

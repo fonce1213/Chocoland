@@ -1,69 +1,107 @@
 <div class="container">
+  <h5>商品詳細</h5>
+  
   <div class="row">
-    <div class="col">
-      <%= @post_item.item_name %>
-      
-    </div>
-    
-    
-   
-    
-    <% if @post_item.bookmark_by?(current_user) %>
-      <p>
-        <%= link_to post_item_bookmarks_path(@post_item), method: :delete do %>
-          <%= @post_item.bookmarks.count %>いいね
-        <% end %>
-      </p>
-    <% else %>
-      <p>
-        <%= link_to post_item_bookmarks_path(@post_item), method: :post do %>
-          <%= @post_item.bookmarks.count %>いいね
-        <% end %>
-      </p>
-    <% end %>
-    
-    <!-- 投稿編集用 -->
-    <div class="row">
-      <div class="col">
-        <%= link_to "投稿内容を編集する", edit_post_item_path(@post_item.id) %>
-      </div>
-    </div>
-    
-    <div class="col">
-      <p>レビュー件数：<%= @post_item.reviews.count %></p>
-      <% @post_item.reviews.each do |review| %>
-       <% unless review.is_draft == true %>
-        <div class="card" style="width: 30rem;">
-          <div class="card-body">
-            <p class="card-title"><%= review.user.name %></p>
-            <p class="card-subtitle"><%= review.review %></p>
-            <div class="col">
-              <div id="star-rate<%= review.id %>">
-                <script>
-                  $('#star-rate<%= review.id %>').empty();
-                  $('#star-rate<%= review.id %>').raty({
-                    size: 36,
-                    starOff: '<%= asset_path('star-off.png') %>',
-                    starOn: '<%= asset_path('star-on.png') %>',
-                    starHalf: '<%= asset_path('star-half.png') %>',
-                    half: true,
-                    readOnly: true,
-                    score: <%= review.evaluation %>,
-                  })
-                </script>
-              </div>
-          </div>
-          <%= link_to "レビューを見る", post_item_review_path(review.post_item, review) %>
-          <% if review.user == current_user %>
-            <%= link_to "削除", post_item_review_path(review.post_item, review), method: :delete %>
-          <% end %>
-        </div>
+    <div class="col-md-4">
+      <% if @post_item.item_image.present? %>
+        <%= link_to post_item_path(@post_item.id) do %>
+          <%= image_tag @post_item.get_image(200,200) %>
         <% end %>
       <% end %>
     </div>
     
-    <div class="col">
-      <%= link_to "レビューを投稿する", new_post_item_review_path(@post_item.id) %>
+    <div class="col-md-8">
+      <table class="table">
+        <tr>
+          <td>商品名</td>
+          <td><%= @post_item.item_name %></td>
+        </tr>
+        <tr>
+          <td>価格</td>
+          <td><%= @post_item.price %>円</td>
+        </tr>
+        <tr>
+          <td>店名</td>
+          <td><%= @post_item.shop.shop_name %></td>
+        </tr>
+        <tr>
+          <td>住所</td>
+          <td><%= @post_item.shop.address %></td>
+        </tr>
+        <tr>
+          <td>HP</td>
+          <td><%= link_to @post_item.shop.shop_URL, @post_item.shop.shop_URL %></td>
+        </tr>
+      </table>
+      
+      <!-- 投稿編集用 -->
+      <% if @post_item.user == current_user %>
+        <div class="row">
+          <div class="col-md-6">
+            <%= link_to "商品内容を編集する", edit_post_item_path(@post_item.id) %>
+          </div>
+          <div class="col-md-6">
+            <%= link_to "商品を削除する", admin_post_item_path(@post_item.id), method: :delete, data:{confirm: "本当に削除しますか？"} %>
+          </div>
+        </div>
+      <% end %>
+    
+      <% if @post_item.bookmark_by?(current_user) %>
+        <p>
+          <%= link_to post_item_bookmarks_path(@post_item), method: :delete do %>
+            <%= @post_item.bookmarks.count %>いいね
+          <% end %>
+        </p>
+      <% else %>
+        <p>
+          <%= link_to post_item_bookmarks_path(@post_item), method: :post do %>
+            <%= @post_item.bookmarks.count %>いいね
+          <% end %>
+        </p>
+      <% end %>
+
+      <p>レビュー件数：<%= @post_item.reviews.where(is_draft: false).count %></p>
+      
+      <div class="col">
+        <%= link_to "レビューを投稿する", new_post_item_review_path(@post_item.id) %>
+      </div>
+      
+      <% @post_item.reviews.each do |review| %>
+        <% unless review.is_draft == true %>
+          <div class="card mb-3">
+            <div class="card-body">
+              <h6 class="card-title"><%= review.user.name %></h6>
+              <p class="card-text"><%= review.review %></p>
+              <div id="star-rate<%= review.id %>"></div>
+            </div>
+            <div class="card-footer">
+              <%= link_to "レビューを見る", post_item_review_path(review.post_item, review) %>
+              <% if review.user == current_user %>
+                <%= link_to "削除", post_item_review_path(review.post_item, review), method: :delete %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
     </div>
   </div>
-  <div class="row"></div>
+</div>
+
+<script>
+  $(document).ready(function(){
+    <% @post_item.reviews.each do |review| %>
+      <% unless review.is_draft == true %>
+        $('#star-rate<%= review.id %>').empty();
+        $('#star-rate<%= review.id %>').raty({
+          size: 36,
+          starOff: '<%= asset_path('star-off.png') %>',
+          starOn: '<%= asset_path('star-on.png') %>',
+          starHalf: '<%= asset_path('star-half.png') %>',
+          half: true,
+          readOnly: true,
+          score: <%= review.evaluation %>,
+        })
+      <% end %>
+    <% end %>
+  })
+</script>

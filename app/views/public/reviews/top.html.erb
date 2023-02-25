@@ -1,10 +1,11 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      レビュー
+      <h5>トップページ</h5>
+      <%= link_to "商品を投稿する", new_post_item_path, class: "btn btn-primary" %>
+      <%= link_to "商品を探してレビューする", post_items_path, class: "btn btn-primary" %>
     </div>
-    新規投稿
-    <%= link_to "レビューを投稿する", new_post_review_path %>
-    <%= link_to "商品を投稿する", new_post_item_path %>
+
+    <%= render 'public/post_items/search' %>
   </div>
 </div>

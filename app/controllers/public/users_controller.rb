@@ -1,5 +1,10 @@
 class Public::UsersController < ApplicationController
+  before_action :authenticate_user!
+  before_action :forbid_new_guest, only: [:edit, :unsubscribe, :withdraw]
+  
   def show
+    @following_users = current_user.following_user
+    @follower_users = current_user.follower_user
   end
 
   def edit
@@ -17,8 +22,6 @@ class Public::UsersController < ApplicationController
   
   def index
     @reviews = current_user.reviews
-    #@post_items = PostItem.all
-    #@post_item = current_user.post_items.new
     @tag_list = Tag.all
   end
 
@@ -26,9 +29,22 @@ class Public::UsersController < ApplicationController
   end
 
   def withdraw
+    current_user.update_attribute(:is_deleted, true)
+    reset_session
+    redirect_to root_path
   end
   
+  private
+  
   def user_params
-    params.require(:user).permit(:name, :email, :image)
+    params.require(:user).permit(:name, :email, :image, :is_deleted)
   end
+  
+  def forbid_new_guest
+    if current_user.email == 'aaa@aaa.com'
+      flash[:danger] = "ゲストユーザーは編集できません"
+      redirect_to mypage_path
+    end
+  end
+  
 end

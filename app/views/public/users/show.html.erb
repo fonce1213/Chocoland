@@ -1,28 +1,89 @@
-会員情報詳細
-
 <div class="container">
-  <div class="row">
-    <div class="col">
-      <table class="table">
+  <h5>会員情報詳細</h5>
+  <% if flash[:danger] %>
+    <p class="text-danger"><%= flash[:danger] %></p>
+  <% end %>
+  <div class="row my-4">
+    <div class="col-md-4">
+      <%= image_tag current_user.get_image(200,200), class: "img-thumbnail" %>
+    </div>
+    <div class="col-md-8">
+      <table class="table table-borderless">
         <tr>
-          <td>名前</td>
+          <th>名前</th>
           <td><%= current_user.name %></td>
         </tr>
         <tr>
-          <td>メールアドレス</td>
-          <td><%= current_user.email %></td>
+          <th>メールアドレス</th>
+          <% if current_user.email == 'aaa@aaa.com' %>
+            <td>******</td>
+          <% else %>
+            <td><%= current_user.email %></td>
+          <% end %>
+        </tr>
+        <tr>
+          <th>フォロー数</th>
+          <td><%= current_user.follower.count %></td>
+        </tr>
+        <tr>
+          <th>フォロワー数</th>
+          <td><%= current_user.followed.count %></td>
         </tr>
       </table>
-      <%= image_tag current_user.get_image(200,200) %>
     </div>
   </div>
-  <div class="row">
-    <div class="col-2">
-      <%= link_to "プロフィールを編集する", edit_information_path, class: "btn btn-primary" %>
-      <!-- ブックマーク一覧 -->
+
+  <div class="row my-4">
+    <div class="col-md-4">
+      <%= link_to "プロフィールを編集する", edit_information_path, class: "btn btn-primary btn-block" %>
     </div>
-    <div class="col-2">
-      <%= link_to "自分の投稿を見る", review_list_path, class: "btn btn-primary" %>
+    <div class="col-md-4">
+      <%= link_to "自分の投稿を見る", review_list_path, class: "btn btn-primary btn-block" %>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col">
+      <%= link_to "いいねした商品を見る", bookmarked_path, class: "btn btn-primary btn-block" %>
+    </div>
+  </div>
+
+  <div class="row my-4">
+    <div class="col-md-6">
+      <table class="table">
+        <caption>フォロー中</caption>
+        <thead>
+          <tr>
+            <th>ユーザー名</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @following_users.each do |following_user| %>
+            <tr>
+              <td><%= link_to following_user.name, post_items_reviewt_path %> <!-- < %= following_user.name %> --></td>
+              <td><%= link_to "フォローを外す", user_relationships_path(following_user.id), method: :delete, class: "btn btn-danger btn-sm" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6">
+      <table class="table">
+        <caption>フォロワー</caption>
+        <thead>
+          <tr>
+            <th>フォロワー名</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @follower_users.each do |follower_user| %>
+            <tr>
+              <td><%= follower_user.name %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

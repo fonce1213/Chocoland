@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <%= @review.review %>
+    </div>
+    <div class="col">
+      <div id="star-rate<%= @review.id %>">
+        <script>
+          $('#star-rate<%= @review.id %>').empty();
+          $('#star-rate<%= @review.id %>').raty({
+            size: 36,
+            starOff: '<%= asset_path('star-off.png') %>',
+            starOn: '<%= asset_path('star-on.png') %>',
+            starHalf: '<%= asset_path('star-half.png') %>',
+            half: true,
+            readOnly: true,
+            score: <%= @review.evaluation %>,
+          })
+        </script>
+      </div>
+    </div>
+    
+    <% @review.tags.each do |tag| %>
+      <span><%= link_to tag.tag_name, tag_reviews_path(tag_id: tag.id) %></span> <!-- リンク修正 -->
+    <% end %>
+    
+              <%= @review.favorites.count %>いいね
+        
+  
+    
+    
+    
+    <div class="col">
+      <p>コメント件数：<%= @review.post_comments.count %></p>
+      <% @review.post_comments.each do |post_comment| %>
+        <div class="card">
+          <%= post_comment.user.name %>
+          <%= post_comment.comment %>
+          
+            <%= link_to "削除", post_item_review_post_comment_path(@review.post_item, post_comment.review, post_comment), method: :delete %>
+          
+        </div>
+      <% end %>
+    </div>
+    
+  </div>
+  <div class="row">
+    
+  </div>
+</div>

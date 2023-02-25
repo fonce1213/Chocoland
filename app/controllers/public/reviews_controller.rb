@@ -1,5 +1,6 @@
 class Public::ReviewsController < ApplicationController
   def top
+    @genres = Genre.all
   end
   
   def new
@@ -22,18 +23,15 @@ class Public::ReviewsController < ApplicationController
     # 投稿ボタンを押下した場合
     if params[:post]
       if @review.save(context: :publicize)
-        binding.pry
         @review.save_tag(tag_list)
         redirect_to post_items_path, notice: "投稿しました" # redirect_back(fallback_location: root_path)
       else
         render :new
-        binding.pry
       end
     # 下書きボタンを押下した場合
     else
       if @review.update(is_draft: true)
-        #binding.pry
-        #@review.attributes = review_params.merge(is_draft: true)
+        @review.attributes = review_params.merge(is_draft: true)
         redirect_to :mypage, notice: "下書きを保存しました"
       else
         render :new, notice: "下書きに失敗しました"
@@ -43,8 +41,6 @@ class Public::ReviewsController < ApplicationController
   
   def index
     @reviews = Review.where(is_draft: false)
-    #@post_items = PostItem.all
-    #@post_item = current_user.post_items.new
     @tag_list = Tag.all
   end
   
@@ -57,9 +53,13 @@ class Public::ReviewsController < ApplicationController
   
   def edit
     @review = Review.find(params[:id])
-    @tag_list = @review.tags.pluck(:tag_name).join(' ')
+    @review_tags = @review.tags  # .pluck(:tag_name).join(' ')
     @post_item = @review.post_item
     @shop = @post_item.shop
+    
+    @tag_list = Tag.all
+    
+    
   end
   
   def update
@@ -91,6 +91,7 @@ class Public::ReviewsController < ApplicationController
     # 3.下書きの更新(非公開)の場合  
     else
       if @review.update(review_params)
+        @review.save_tag(tag_list)
         redirect_to review_list_path, notice: "下書きを更新しました"
         #redirect_to post_item_review_path(@review.id), notice: "下書きを更新しました"
       else

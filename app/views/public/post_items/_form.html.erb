@@ -1,0 +1,55 @@
+<%= form_with(model: post_item, url: url, local: true) do |f| %>
+
+  <div class="my-4">
+    <h5>店舗情報入力</h5>
+      <%= fields_for @shop do |shop| %>
+        <table class="table table-borderless">
+          <tr>
+            <td><%= shop.label :shop_name, "店名" %></td>
+            <td>
+              <%= shop.text_field :shop_name, id: "search_shop_name", style: "width: 100%;" %>
+              <button id="search-shop-btn" class="btn btn-primary" type="button">店名から住所を検索</button>
+            </td>
+          </tr>
+          <tr>
+            <td><%= shop.label :address, "住所" %></td>
+            <td><%= shop.text_field :address, id:"address-input", style: "width: 100%;" %></td>
+          </tr>
+          <tr>
+            <td><%= shop.label :telephone_number, "電話番号" %></td>
+            <td><%= shop.text_field :telephone_number, style: "width: 100%;" %></td>
+          </tr>
+          <tr>
+            <td><%= shop.label :shop_URL, "ホームページ" %></td>
+            <td><%= shop.text_field :shop_URL, style: "width: 100%;" %></td>
+          </tr>
+        </table>
+      <% end %>
+  </div>
+  
+  <div class="my-4">
+  <h5>商品情報入力</h5>
+  <table class="table table-borderless">
+    <tr>
+      <td><%= f.label :item_name, "商品名" %></td>
+      <td><%= f.text_field :item_name %></td>
+    </tr>
+    <tr>
+      <td>ジャンル</td>
+      <td><%= f.collection_select :genre_id, Genre.all, :id, :genre_name, :prompt => "-- 選択してください --" %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :price, "価格" %></td>
+      <td><%= f.text_field :price %>円</td>
+    </tr>
+    <tr>
+      <td><%= f.label :item_URL, "商品URL" %></td>
+      <td><%= f.text_field :item_URL %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :item_image, "画像挿入" %></td>
+      <td><%= f.file_field :item_image, accept: "image/*" %></td>
+    </tr>
+  </table>
+  <%= f.submit submit, class: "btn btn-success" %>
+<% end %>

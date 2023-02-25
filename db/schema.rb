@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_07_121559) do
+ActiveRecord::Schema.define(version: 2023_02_18_221851) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -70,6 +70,12 @@ ActiveRecord::Schema.define(version: 2022_12_07_121559) do
     t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
+  create_table "genres", force: :cascade do |t|
+    t.string "genre_name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "post_comments", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "review_id", null: false
@@ -83,13 +89,22 @@ ActiveRecord::Schema.define(version: 2022_12_07_121559) do
   create_table "post_items", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "shop_id", null: false
+    t.integer "genre_id", null: false
     t.string "item_name", null: false
     t.integer "price", null: false
     t.string "item_URL", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["genre_id"], name: "index_post_items_on_genre_id"
     t.index ["shop_id"], name: "index_post_items_on_shop_id"
     t.index ["user_id"], name: "index_post_items_on_user_id"
+  end
+
+  create_table "relationships", force: :cascade do |t|
+    t.integer "follower_id"
+    t.integer "followed_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "review_tags", force: :cascade do |t|
@@ -116,10 +131,13 @@ ActiveRecord::Schema.define(version: 2022_12_07_121559) do
   create_table "shops", force: :cascade do |t|
     t.string "shop_name", null: false
     t.string "address", null: false
+    t.float "latitude"
+    t.float "longitude"
     t.string "telephone_number", null: false
     t.string "shop_URL", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "prefecture"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -150,6 +168,7 @@ ActiveRecord::Schema.define(version: 2022_12_07_121559) do
   add_foreign_key "favorites", "users"
   add_foreign_key "post_comments", "reviews"
   add_foreign_key "post_comments", "users"
+  add_foreign_key "post_items", "genres"
   add_foreign_key "post_items", "shops"
   add_foreign_key "post_items", "users"
   add_foreign_key "review_tags", "reviews"

@@ -1,84 +1,156 @@
-<div class="container">
+<div class="container my-5">
   <div class="row">
-    
-    <table class="table">
-      <tr>
-        <td>商品名</td>
-        <td><%= @post_item.item_name %></td>
-      </tr>
-      <tr>
-        <td>価格</td>
-        <td><%= @post_item.price %></td>
-      </tr>
-      <tr>
-        <td>URL</td>
-        <td><%= @post_item.item_URL %></td>
-      </tr>
-    </table>
-    
-    <table class="table">
-      <tr>
-        <td>店名</td>
-        <td><%= @shop.shop_name %></td>
-      </tr>
-      <tr>
-        <td>住所</td>
-        <td><%= @shop.address %></td>
-      </tr>
-      <tr>
-        <td>電話番号</td>
-        <td><%= @shop.telephone_number %></td>
-      </tr>
-      <tr>
-        <td>ホームページ</td>
-        <td><%= @shop.shop_URL %></td>
-      </tr>
-    </table>
-    
-    
-    <%= form_with model: [@post_item, @review], local: true do |f| %>
-      
-      <ul class="">
-        <%= f.label :review, "レビュー" %>
-        <%= f.text_area :review %>
-      </ul>
-     
-      <div class="star-form-group" id="star">
-        <%= f.label :evaluation, "評価", class: "star-title" %>
-        <!-- 入力方法を変更する-->
-        <%= f.hidden_field :evaluation, id: :review_star %>
-        <!--< %= f.text_field :evaluation %>-->
+    <div class="col-6 mx-auto">
+      <div class="my-4">
+        <h5>店舗情報</h5>
+        <table class="table">
+          <tr>
+            <td>店名</td>
+            <td><%= @shop.shop_name %></td>
+          </tr>
+          <tr>
+            <td>住所</td>
+            <td><%= @shop.address %></td>
+          </tr>
+          <tr>
+            <td>電話番号</td>
+            <td><%= @shop.telephone_number %></td>
+          </tr>
+          <tr>
+            <td>ホームページ</td>
+            <td><%= @shop.shop_URL %></td>
+          </tr>
+        </table>
       </div>
-      <script>
-        // $('#star').empty();
-        $('#star').raty({
-          size: 36,
-          starOff: '<%= asset_path('star-off.png') %>',
-          starOn: '<%= asset_path('star-on.png') %>',
-          starHalf: '<%= asset_path('star-half.png') %>',
-          scoreName: 'review[evaluation]',
-          half: true,
-        })
-      </script>
-      
-      <div class="col">
-        スペースを入力することで複数のタグを付けることができます。
-        <%= f.text_field :tag_name %>
+
+      <div class="my-4">
+        <h5>商品情報</h5>
+        <table class="table">
+          <tr>
+            <td>商品名</td>
+            <td><%= @post_item.item_name %></td>
+          </tr>
+          <tr>
+            <td>価格</td>
+            <td><%= number_with_delimiter(@post_item.price) %>円</td>
+          </tr>
+          <tr>
+            <td>URL</td>
+            <td><%= @post_item.item_URL %></td>
+          </tr>
+        </table>
       </div>
-  
-      <%= f.submit "投稿する", :name => 'post', class: "btn btn-success" %>
-      <%= f.submit "下書きに保存", :name => 'draft', class: "btn btn-secondary" %>
-    <% end %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6 mx-auto">
+      <%= form_with model: [@post_item, @review], local: true do |f| %>
+        <div>
+          <%= f.label :review, "レビュー" %>
+          <%= f.text_area :review, style: "width:500px; height: 200px;" %>
+        </div>
+       
+        <div class="star-form-group" id="star">
+          <%= f.label :evaluation, "評価", class: "star-title" %>
+          <%= f.hidden_field :evaluation, id: :review_star %>
+        </div>
+        
+        <script>
+          // $('#star').empty();
+          $('#star').raty({
+            size: 36,
+            starOff: '<%= asset_path('star-off.png') %>',
+            starOn: '<%= asset_path('star-on.png') %>',
+            starHalf: '<%= asset_path('star-half.png') %>',
+            scoreName: 'review[evaluation]',
+            half: true,
+          })
+        </script>
+        
+        <div class="col">
+          <%= f.hidden_field :tag_name, id: "tag_name" %>
+        </div>
+        
+        <h6 class="mt-5">タグ</h6>
+        <div class="col border" id="tag_name_container">
+          <!-- ここにタグボタンを表示 -->
+        </div>
+        <input type="hidden" id="tag_name" />
+      
+        <%= f.submit "投稿する", :name => 'post', class: "btn btn-success" %>
+        <%= f.submit "下書きに保存", :name => 'draft', class: "btn btn-secondary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div>
+        <input type="text" id="new_tag_name">
+        <button type="button" id="add_new_tag_button" class="btn btn-outline-primary">タグの追加</button>
+      </div>
+      <div class="tag-list">
+        タグリスト
+        <% @tag_list.each do |list| %>
+          <button class="btn btn-outline-primary tag-button" value="<%= list.tag_name %>">
+            <%= list.tag_name %>
+          </button>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
 
-<%= form_with model: @tag, url: tags_path, method: :post do |tag| %>
-  <%= tag.text_field :tag_name %>
-  <%= tag.submit "タグ追加", class: "btn btn-primary" %>
-<% end %>
+<script>
+  const tagButtons = document.querySelectorAll('.tag-button');
+  const tagNameInput = document.querySelector('#tag_name');
+  const tagNameContainer = document.querySelector('#tag_name_container');
+  
+  const newTagInput = document.querySelector('#new_tag_name');
+const addNewTagButton = document.querySelector('#add_new_tag_button');
+  
+  let selectedTags = [];
+  
+  tagButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const tag = this.textContent.trim();
+      if (!selectedTags.includes(tag)) {
+        selectedTags.push(tag);
+        tagNameInput.value = selectedTags.join(" ");
+        
+        const newTagButton = document.createElement('div');
+        newTagButton.classList.add('tag-button');
+        newTagButton.textContent = tag;
+        newTagButton.addEventListener('click', function() {
+          selectedTags = selectedTags.filter(selectedTag => selectedTag !== tag);
+          tagNameInput.value = selectedTags.join(" ");
+          tagNameContainer.removeChild(this);
+        });
+        
+        tagNameContainer.appendChild(newTagButton);
+      }
+    });
+  });
 
-タグリスト
-<% @tag_list.each do |list| %>
-  <%= link_to list.tag_name, tag_reviews_path(tag_id: list.id) %>
-  <%= "(#{list.reviews.count})" %>
-<% end %>
+
+addNewTagButton.addEventListener('click', function() {
+  const newTag = newTagInput.value.trim();
+  if (newTag !== "" && !selectedTags.includes(newTag)) {
+    selectedTags.push(newTag);
+    tagNameInput.value = selectedTags.join(" ");
+
+    const newTagButton = document.createElement('div');
+    newTagButton.classList.add('tag-button');
+    newTagButton.textContent = newTag;
+    newTagButton.addEventListener('click', function() {
+      selectedTags = selectedTags.filter(selectedTag => selectedTag !== newTag);
+      tagNameInput.value = selectedTags.join(" ");
+      tagNameContainer.removeChild(this);
+    });
+
+    tagNameContainer.appendChild(newTagButton);
+    newTagInput.value = "";
+  }
+});
+
+</script>

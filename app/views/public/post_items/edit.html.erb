@@ -1,78 +1,94 @@
-<div class="container">
+<div class="container mt-5">
   <div class="row">
-    
-    <%= form_with model: @post_item, method: :patch do |f| %>
-      <ul class="">
-        <%= f.label :item_name, "商品名" %>
-        <%= f.text_field :item_name %>
-      </ul>
-      <ul class="">
-        <%= f.label :review, "レビュー" %>
-        <%= f.text_area :review %>
-      </ul>
-      <ul class="">
-        <%= f.label :price, "価格" %>
-        <%= f.text_field :price %>
-      </ul>
-      
-      <div class="star-form-group" id="star1">
-        <%= f.label :evaluation, "評価", class: "star-title" %>
-        <!-- 入力方法を変更する-->
-        <%= f.text_field :evaluation %>
-      </div>
-      
-      <div class="">
-        <%= f.label :item_URL, "URL" %>
-        <%= f.text_field :item_URL %>
-      </div>
-      
-      <div class="">
-        スペースを入力することで複数のタグを付けることができます。
-        <%= f.text_field :tag_name, value: @tag_list %>
-      </div>
-      
-      <!--<div class="form-group">-->
-      <!--  < %= f.collection_check_boxes(:tag_ids, Tag.all, :id, :tag_name) do |tag| %>-->
-      <!--    <div class="form-check">-->
-      <!--      < %= tag.label class: "form-check-label" do %>-->
-      <!--        < %= tag.check_box class: "form-check-input" %>-->
-      <!--        < %= tag.text %>-->
-      <!--      < % end %>-->
-      <!--    </div>-->
-      <!--  < % end %>-->
-      <!--</div>-->
-      
-      <%= fields_for @shop do |shop| %>
-        <div class="">
-          <%= shop.label :shop_name, "店名" %>
-          <%= shop.text_field :shop_name %>
-        </div>
-        <div class="">
-          <%= shop.label :address, "住所" %>
-          <%= shop.text_field :address %>
-        </div>
-        <div class="">
-          <%= shop.label :telephone_number, "電話番号" %>
-          <%= shop.text_field :telephone_number %>
-        </div>
-        <div class="">
-          <%= shop.label :shop_URL, "ホームページ" %>
-          <%= shop.text_field :shop_URL %>
-        </div>
-        <div class="">
-          <%= shop.label :email, "メールアドレス" %>
-          <%= shop.text_field :email %>
-        </div>
-      <% end %>
-      
-      
-      
-      <%= f.submit "更新する", class: "btn btn-success" %>
-    <% end %>
+    <div class="col-md-6 mx-auto">
+      <h4 class="my-2">商品情報の編集</h4>
+      <%= render 'form', post_item: @post_item, url: edit_post_item_path(@post_item), submit: '更新' %>
+    </div>
+    <div id="map" style="height: 400px; width: 100%;"></div>
   </div>
 </div>
 
-<%= form_with model: @tag, url: tags_path, method: :post do |tag| %>
-  <%= tag.text_field :tag_name %>
-  <%= tag.submit "タグ追加", class: "btn btn-primary" %>
-<% end %>
+<script>
+  var map;
+  var marker;
+  var geocoder;
+  
+  function initMap() {
+    var latitude = <%= @shop.latitude %>;
+    var longitude = <%= @shop.longitude %>;
+    
+    map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 16,
+      center: { lat: latitude, lng: longitude }
+    });
+  
+    marker = new google.maps.Marker({
+      map: map,
+      position: { lat: latitude, lng: longitude }
+    });
+  
+    geocoder = new google.maps.Geocoder();
+  
+    google.maps.event.addListener(map, "click", function(event) {
+      marker.setPosition(event.latLng);
+      geocodeLatLng(event.latLng);
+    });
+  }
+  
+  function geocodeLatLng(latlng) {
+    // ジオコーダーを使って住所を検索する
+    geocoder.geocode({ location: latlng }, function(results, status) {
+      if (status === "OK") {
+        if (results[0]) {
+          var formattedAddress = results[0].formatted_address;
+          // address components取得
+          var addressComponents = results[0].address_components;
+          // 国と郵便番号のaddress componentsを取り出す
+          var country = "";
+          var postalCode = "";
+          for (var i = 0; i < addressComponents.length; i++) {
+            var component = addressComponents[i];
+            if (component.types.includes("country")) {
+              country = component.long_name;
+            }
+            if (component.types.includes("postal_code")) {
+              postalCode = component.long_name;
+            }
+          }
+          // 国と郵便番号を除く
+          formattedAddress = formattedAddress.replace(country, "").replace(postalCode, "").trim();
+          // 2番目のaddress component(都道府県)を取得
+          var addressComponents = formattedAddress.split(" ");
+          if (addressComponents.length > 1) {
+            formattedAddress = addressComponents.slice(1).join(" ");
+          }
+          document.getElementById("address-input").value = formattedAddress;
+        } else {
+          window.alert("No results found");
+        }
+      } else {
+        window.alert("Geocoder failed due to: " + status);
+      }
+    });
+  }
+</script>          
+<script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['API_KEY'] %>&callback=initMap" async defer></script>  
+
+<script>
+  $(function() {
+    $("#search-shop-btn").click(function() {
+      var shopName = $("#search_shop_name").val();
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: shopName }, function(results, status) {
+        if (status === "OK") {
+          var location = results[0].geometry.location;
+          map.setCenter(location);
+          marker.setPosition(location);
+          geocodeLatLng(location);
+        } else {
+          window.alert("店名が見つかりませんでした。");
+        }
+      });
+    });
+  });
+</script>

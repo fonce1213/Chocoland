@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="row">商品一覧</div>
+  <div class="row">
+    <% @post_items.each do |post_item| %>
+      <div class="col-md-4">
+        <div class="card bg-light mb-3" style="max-width: 20rem; height: 24rem;">
+          <div class="card-body">
+            <p class="card-title"><%= link_to post_item.item_name, admin_post_item_path(post_item.id) %></p>
+            <p class="card-subtitle"><%= post_item.shop.shop_name %></p>
+            <p class="card-subtitle"><%= post_item.shop.address %></p>
+            <% if post_item.item_image.present? %>
+              <%= link_to admin_post_item_path(post_item.id) do %>
+                <%= image_tag post_item.get_image(200,200) %></br>
+              <% end %>
+            <% end %>
+          </div>
+            
+          <div class="card-footer" style="border-color: transparent; background-color: transparent; position: absolute; bottom: 0;">
+            <%= post_item.bookmarks.count %>いいね
+
+            <!-- レビューの数を表示 -->
+            <% if post_item.reviews.where(is_draft: false).count > 0 %>
+              <%= link_to admin_reviews_path(post_item_id: post_item.id) do %>
+                <%= post_item.reviews.where(is_draft: false).count %>件のレビュー
+              <% end %>
+            <% else %>
+              <%= "レビューがありません" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="d-flex justify-content-center">
+    <%= paginate @post_items %>
+  </div>
+</div>
